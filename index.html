@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" />
+    <title>Helicopter Game</title>
+
+    <!-- Normalize CSS (Optional but good practice) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+
+    <!-- Optional: Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Gravitas+One&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Your Custom Styles -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="game-wrapper"> <!-- Added wrapper for better centering if needed -->
+        <div id="game-container">
+            <h1 class="game-title">🚁 Helicopter Game</h1>
+
+            <div class="info-bar">
+                <div id="score-display">Score: 0</div>
+                <div id="best-score-display">Best: 0</div>
+                <button id="pauseButton" class="game-button">Pause</button>
+            </div>
+
+            <div id="canvas-container"> <!-- Container for canvas and overlays -->
+                <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+                <div id="pauseOverlay" class="overlay hidden">
+                    <div>PAUSED</div>
+                    <div class="overlay-instructions">(Tap/Click/Space to Resume)</div>
+                </div>
+
+                <div id="gameOver" class="overlay hidden">
+                    <h2>Game Over!</h2>
+                    <p>Your Score: <span id="finalScore">0</span></p>
+                    <button id="restartButton" class="game-button restart-button">Restart</button>
+                </div>
+            </div>
+
+            <div id="instructions" class="instructions-text">
+                Hold Mouse/Space or Tap Screen to Ascend
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional: Sound element -->
+    <audio id="crashSound" src="assets/crash.mp3" preload="auto"></audio> 
+
+    <!-- Game Script -->
+    <script src="script.js"></script>
+</body>
+
+</html>
