@@ -17,3 +17,4 @@ A classic side-scrolling helicopter game built with HTML5 Canvas and JavaScript.
 *   **HTML5:** For the basic structure and Canvas element.
 *   **CSS3:** For styling the page elements (like buttons, score display).
 *   **JavaScript (ES6+):** For game logic, rendering, controls, and collision detection
+
