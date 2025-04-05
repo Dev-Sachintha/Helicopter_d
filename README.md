@@ -13,3 +13,7 @@ A classic side-scrolling helicopter game built with HTML5 Canvas and JavaScript.
 -   If you collide, the game is over. Click the "Restart" button or press Space/Enter to play again.
 
 ## File Structure
+
+*   **HTML5:** For the basic structure and Canvas element.
+*   **CSS3:** For styling the page elements (like buttons, score display).
+*   **JavaScript (ES6+):** For game logic, rendering, controls, and collision detection
