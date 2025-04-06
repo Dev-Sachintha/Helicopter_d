@@ -1,6 +1,8 @@
 /* Basic Reset & Body Styling */
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    /* Remove tap highlight on mobile */
 }
 
 html,
@@ -10,7 +12,10 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    /* Prevent scrollbars */
     font-family: 'Roboto', sans-serif;
+    background-color: #333;
+    /* Fallback background */
 }
 
 body {
@@ -19,37 +24,33 @@ body {
     align-items: center;
     background-color: #e0e0e0;
     background-image: url(./assets/sk.gif);
+    
 }
 
-/* Wrapper fills full screen */
-.wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background-image: url(./assets/night.gif);
-    background-size: cover;
-    background-position: center;
-    padding: 20px;
-}
-
-/* Game container limits width */
+/* Game wrapper centers the container */
 #game-wrapper {
     width: 100%;
     max-width: 900px;
+    /* Max width of the game area */
+    padding: 10px;
+    /* Spacing from screen edges */
     display: flex;
     justify-content: center;
+    background-color: transparent;
 }
 
 /* Inner container styling */
 #game-container {
-    background-color: #ffffff;
-    padding: 15px 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    /* Slightly transparent white */
+    padding: 15px;
     border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
     text-align: center;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: transparent;
 }
 
 /* Title */
@@ -57,7 +58,8 @@ body {
     font-family: 'Gravitas One', cursive;
     margin: 0 0 15px;
     color: #333;
-    font-size: 2em;
+    font-size: clamp(1.5em, 4vw, 2em);
+    /* Responsive font size */
 }
 
 /* Info bar */
@@ -66,28 +68,40 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-    padding: 5px 10px;
-    background-color: #f8f9fa;
+    padding: 8px 12px;
+    background-color: #f0f0f0;
     border-radius: 6px;
-    font-size: 1.1em;
+    font-size: clamp(0.9em, 2.5vw, 1.1em);
+    /* Responsive font size */
     font-weight: bold;
     flex-wrap: wrap;
+    /* Allow wrapping on small screens */
     gap: 10px;
+    /* Spacing between items if they wrap */
 }
 
 /* Score display */
 #score-display,
 #best-score-display {
     color: #333;
+    white-space: nowrap;
+    /* Prevent score text from wrapping */
 }
 
 /* Canvas container */
 #canvas-container {
     position: relative;
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
+    /* aspect-ratio is preferred, width/height are fallbacks */
     aspect-ratio: 2 / 1;
+    /* Maintain 2:1 ratio */
+    margin: 0 auto;
+    background-color: #87CEEB;
+    /* Fallback background color */
+    border-radius: 8px;
+    /* Slightly rounded corners */
+    overflow: hidden;
+    /* Clip contents like overlays */
 }
 
 /* Game canvas */
@@ -95,14 +109,8 @@ body {
     display: block;
     width: 100%;
     height: 100%;
-    border: 2px solid #555;
-    background-color: #87CEEB;
-
-    /* Prevent blurring */
-    image-rendering: -moz-crisp-edges;
-    image-rendering: -webkit-crisp-edges;
-    image-rendering: pixelated;
-    image-rendering: crisp-edges;
+    image-rendering: auto; /* Use default rendering, remove pixelated */
+    /* No border needed if container has overflow hidden and background */
 }
 
 /* Overlays */
@@ -112,7 +120,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(0, 0, 0, 0.75);
+    /* Slightly darker overlay */
     color: white;
     display: flex;
     flex-direction: column;
@@ -120,43 +129,60 @@ body {
     align-items: center;
     text-align: center;
     z-index: 10;
-    font-size: 1.5em;
+    font-size: clamp(1.2em, 3.5vw, 1.5em);
+    /* Responsive font size */
+    padding: 15px;
+    box-sizing: border-box;
+    /* Include padding in size */
 }
 
+/* Specific overlay text styling */
+#loadingIndicator div,
 #pauseOverlay div:first-child {
-    font-size: 2em;
+    font-size: 1.5em;
+    /* Relative to parent overlay font-size */
     font-weight: bold;
     margin-bottom: 10px;
-    color: #ffcc00;
+    color: #ffdd57;
+    /* Yellowish color */
 }
 
 .overlay-instructions {
     font-size: 0.7em;
+    /* Relative */
     color: #ccc;
 }
 
 #gameOver h2 {
     margin: 0 0 10px;
-    color: #ff4d4d;
-    font-size: 1.8em;
+    color: #ff6b6b;
+    /* Reddish color */
+    font-size: 1.6em;
+    /* Relative */
 }
 
 #gameOver p {
     margin-bottom: 20px;
-    font-size: 1.1em;
+    font-size: 1em;
+    /* Relative */
 }
 
 /* Buttons */
 .game-button {
-    padding: 8px 15px;
+    padding: 10px 18px;
     font-size: 0.9em;
+    /* Relative to info-bar / overlay */
     font-weight: bold;
     cursor: pointer;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     background-color: #007bff;
     color: white;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    -webkit-appearance: none;
+    /* Fix iOS button styling */
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .game-button:hover {
@@ -165,12 +191,16 @@ body {
 
 .game-button:active {
     background-color: #004085;
+    transform: scale(0.97);
+    /* Slight press effect */
 }
 
 .restart-button {
     background-color: #28a745;
-    padding: 10px 25px;
+    /* Green */
+    padding: 12px 28px;
     font-size: 1.1em;
+    /* Larger restart button */
 }
 
 .restart-button:hover {
@@ -179,6 +209,7 @@ body {
 
 #pauseButton.paused {
     background-color: #ffc107;
+    /* Orange/Yellow */
     color: #333;
 }
 
@@ -188,44 +219,37 @@ body {
 
 /* Instruction text */
 .instructions-text {
-    font-size: 0.9em;
+    font-size: clamp(0.8em, 2.2vw, 0.9em);
+    /* Responsive */
     color: #6c757d;
     margin-top: 15px;
 }
 
 /* Utility */
 .hidden {
-    display: none;
+    display: none !important;
+    /* Use important to ensure override */
 }
 
-/* Responsive for phones */
-@media (max-width: 600px) {
-    .game-title {
-        font-size: 1.4em;
-    }
-
-    .info-bar {
-        font-size: 0.9em;
-        justify-content: center;
-        gap: 10px;
-    }
-
-    #pauseButton {
-        padding: 6px 12px;
-    }
-
-    .overlay {
-        font-size: 1.2em;
+/* Specific adjustments for smaller screens if needed */
+@media (max-width: 400px) {
+    #game-container {
         padding: 10px;
     }
 
-    #gameOver h2 {
-        font-size: 1.5em;
+    .info-bar {
+        padding: 6px 8px;
+        gap: 8px;
     }
 
-    #gameOver p {
-        font-size: 1em;
+    .game-button {
+        padding: 8px 14px;
     }
+
+    .restart-button {
+        padding: 10px 22px;
+    }
+}
 
     .restart-button {
         padding: 8px 20px;
