@@ -3,22 +3,24 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0 user-scalable=no" />
+    <!-- Adjusted viewport for better mobile experience -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Helicopter Game</title>
 
-    <!-- Normalize CSS (Optional but good practice) -->
+    <!-- Normalize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
 
-    <!-- Optional: Google Fonts -->
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Gravitas+One&family=Roboto:wght@400;700&display=swap"
         rel="stylesheet" />
 
-    <!-- Your Custom Styles -->
+    <!-- Custom Styles -->
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <div id="game-wrapper"> <!-- Added wrapper for better centering if needed -->
+    <!-- Simplified wrapper structure -->
+    <div id="game-wrapper">
         <div id="game-container">
             <h1 class="game-title">🚁 Helicopter Game</h1>
 
@@ -28,8 +30,14 @@
                 <button id="pauseButton" class="game-button">Pause</button>
             </div>
 
-            <div id="canvas-container"> <!-- Container for canvas and overlays -->
-                <canvas id="gameCanvas" width="800" height="400"></canvas>
+            <!-- Container for canvas, overlays, and loading -->
+            <div id="canvas-container">
+                <!-- Loading Indicator -->
+                <div id="loadingIndicator" class="overlay">
+                    <div>LOADING...</div>
+                </div>
+
+                <canvas id="gameCanvas"></canvas> <!-- Removed fixed width/height -->
 
                 <div id="pauseOverlay" class="overlay hidden">
                     <div>PAUSED</div>
@@ -50,7 +58,7 @@
     </div>
 
     <!-- Optional: Sound element -->
-    <audio id="crashSound" src="assets/crash.mp3" preload="auto"></audio> 
+    <audio id="crashSound" src="assets/crash.mp3" preload="auto"></audio>
 
     <!-- Game Script -->
     <script src="script.js"></script>
