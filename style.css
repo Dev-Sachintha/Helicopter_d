@@ -2,7 +2,6 @@
 * {
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-    /* Remove tap highlight on mobile */
 }
 
 html,
@@ -12,37 +11,40 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    /* Prevent scrollbars */
     font-family: 'Roboto', sans-serif;
+    /* === BACKGROUND IMAGE SETUP === */
+    background-image: url('./assets/sky.gif');
+    /* Path relative to style.css */
     background-color: #333;
-    /* Fallback background */
+    /* Fallback color */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* ============================ */
 }
 
+/* Layout for body */
 body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #e0e0e0;
-    background-image: url(./assets/sk.gif);
-    
 }
 
-/* Game wrapper centers the container */
+/* Game wrapper - MUST be transparent */
 #game-wrapper {
     width: 100%;
     max-width: 900px;
-    /* Max width of the game area */
     padding: 10px;
-    /* Spacing from screen edges */
     display: flex;
     justify-content: center;
     background-color: transparent;
+    /* IMPORTANT */
 }
 
-/* Inner container styling */
+/* Inner container - Can be slightly transparent or fully */
 #game-container {
-    background-color: rgba(255, 255, 255, 0.95);
-    /* Slightly transparent white */
+    background-color: rgba(255, 255, 255, 0.85);
+    /* Adjust opacity (0.85) or use 'transparent' */
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
@@ -50,16 +52,15 @@ body {
     width: 100%;
     display: flex;
     flex-direction: column;
-    background-color: transparent;
 }
 
 /* Title */
 .game-title {
     font-family: 'Gravitas One', cursive;
     margin: 0 0 15px;
-    color: #333;
+    color: #222;
     font-size: clamp(1.5em, 4vw, 2em);
-    /* Responsive font size */
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.7);
 }
 
 /* Info bar */
@@ -69,15 +70,12 @@ body {
     align-items: center;
     margin-bottom: 10px;
     padding: 8px 12px;
-    background-color: #f0f0f0;
+    background-color: rgba(240, 240, 240, 0.9);
     border-radius: 6px;
     font-size: clamp(0.9em, 2.5vw, 1.1em);
-    /* Responsive font size */
     font-weight: bold;
     flex-wrap: wrap;
-    /* Allow wrapping on small screens */
     gap: 10px;
-    /* Spacing between items if they wrap */
 }
 
 /* Score display */
@@ -85,32 +83,28 @@ body {
 #best-score-display {
     color: #333;
     white-space: nowrap;
-    /* Prevent score text from wrapping */
 }
 
-/* Canvas container */
+/* Canvas container - MUST be transparent and have NO background color */
 #canvas-container {
     position: relative;
     width: 100%;
-    /* aspect-ratio is preferred, width/height are fallbacks */
     aspect-ratio: 2 / 1;
-    /* Maintain 2:1 ratio */
     margin: 0 auto;
-    background-color: #87CEEB;
-    /* Fallback background color */
+    /* background-color: #87CEEB; */
+    /* MAKE SURE THIS IS COMMENTED OUT OR REMOVED */
+    background-color: transparent;
+    /* Explicitly set to transparent */
     border-radius: 8px;
-    /* Slightly rounded corners */
     overflow: hidden;
-    /* Clip contents like overlays */
+    border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* Game canvas */
+/* Game canvas - No background needed here */
 #gameCanvas {
     display: block;
     width: 100%;
     height: 100%;
-    image-rendering: auto; /* Use default rendering, remove pixelated */
-    /* No border needed if container has overflow hidden and background */
 }
 
 /* Overlays */
@@ -121,7 +115,6 @@ body {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.75);
-    /* Slightly darker overlay */
     color: white;
     display: flex;
     flex-direction: column;
@@ -130,48 +123,39 @@ body {
     text-align: center;
     z-index: 10;
     font-size: clamp(1.2em, 3.5vw, 1.5em);
-    /* Responsive font size */
     padding: 15px;
     box-sizing: border-box;
-    /* Include padding in size */
 }
 
 /* Specific overlay text styling */
 #loadingIndicator div,
 #pauseOverlay div:first-child {
     font-size: 1.5em;
-    /* Relative to parent overlay font-size */
     font-weight: bold;
     margin-bottom: 10px;
     color: #ffdd57;
-    /* Yellowish color */
 }
 
 .overlay-instructions {
     font-size: 0.7em;
-    /* Relative */
     color: #ccc;
 }
 
 #gameOver h2 {
     margin: 0 0 10px;
     color: #ff6b6b;
-    /* Reddish color */
     font-size: 1.6em;
-    /* Relative */
 }
 
 #gameOver p {
     margin-bottom: 20px;
     font-size: 1em;
-    /* Relative */
 }
 
 /* Buttons */
 .game-button {
     padding: 10px 18px;
     font-size: 0.9em;
-    /* Relative to info-bar / overlay */
     font-weight: bold;
     cursor: pointer;
     border: none;
@@ -180,7 +164,6 @@ body {
     color: white;
     transition: background-color 0.2s ease, transform 0.1s ease;
     -webkit-appearance: none;
-    /* Fix iOS button styling */
     -moz-appearance: none;
     appearance: none;
 }
@@ -192,15 +175,12 @@ body {
 .game-button:active {
     background-color: #004085;
     transform: scale(0.97);
-    /* Slight press effect */
 }
 
 .restart-button {
     background-color: #28a745;
-    /* Green */
     padding: 12px 28px;
     font-size: 1.1em;
-    /* Larger restart button */
 }
 
 .restart-button:hover {
@@ -209,7 +189,6 @@ body {
 
 #pauseButton.paused {
     background-color: #ffc107;
-    /* Orange/Yellow */
     color: #333;
 }
 
@@ -220,18 +199,18 @@ body {
 /* Instruction text */
 .instructions-text {
     font-size: clamp(0.8em, 2.2vw, 0.9em);
-    /* Responsive */
-    color: #6c757d;
+    color: #555;
     margin-top: 15px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
 }
 
 /* Utility */
 .hidden {
     display: none !important;
-    /* Use important to ensure override */
 }
 
-/* Specific adjustments for smaller screens if needed */
+/* Responsive */
 @media (max-width: 400px) {
     #game-container {
         padding: 10px;
@@ -246,6 +225,10 @@ body {
         padding: 8px 14px;
     }
 
+    .restart-button {
+        padding: 10px 22px;
+    }
+}
     .restart-button {
         padding: 10px 22px;
     }
