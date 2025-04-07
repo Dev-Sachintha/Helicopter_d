@@ -6,27 +6,25 @@ const bestScoreDisplay = document.getElementById('best-score-display');
 const finalScoreDisplay = document.getElementById('finalScore');
 const gameOverScreen = document.getElementById('gameOver');
 const pauseOverlay = document.getElementById('pauseOverlay');
-const loadingIndicator = document.getElementById('loadingIndicator'); // Added
+const loadingIndicator = document.getElementById('loadingIndicator');
 const restartButton = document.getElementById('restartButton');
 const pauseButton = document.getElementById('pauseButton');
-const crashSound = document.getElementById('crashSound'); // Optional sound
-const canvasContainer = document.getElementById('canvas-container'); // Added
+const crashSound = document.getElementById('crashSound');
+const canvasContainer = document.getElementById('canvas-container');
 
 // --- Game Constants ---
-// Make sizes relative to initial canvas height (400) for scaling
 const BASE_CANVAS_HEIGHT = 400;
 const HELICOPTER_WIDTH_RATIO = 60 / BASE_CANVAS_HEIGHT;
 const HELICOPTER_HEIGHT_RATIO = 25 / BASE_CANVAS_HEIGHT;
 const OBSTACLE_WIDTH_RATIO = 70 / BASE_CANVAS_HEIGHT;
 const OBSTACLE_GAP_RATIO = 140 / BASE_CANVAS_HEIGHT;
-const OBSTACLE_MIN_HEIGHT_RATIO = 40 / BASE_CANVAS_HEIGHT; // Min height of top/bottom part
+const OBSTACLE_MIN_HEIGHT_RATIO = 40 / BASE_CANVAS_HEIGHT;
 
-// Physics - keep these constant regardless of size for consistent feel
 const GRAVITY = 0.14;
 const LIFT = -0.35;
 const MAX_VELOCITY = 6;
-const OBSTACLE_SPEED = 3.5; // Speed pixels per frame
-const OBSTACLE_FREQUENCY = 100; // Generate obstacle every X frames
+const OBSTACLE_SPEED = 3.5;
+const OBSTACLE_FREQUENCY = 100;
 
 // --- Game State Variables ---
 let helicopterY;
@@ -46,45 +44,47 @@ let currentHelicopterHeight;
 let currentObstacleWidth;
 let currentObstacleGap;
 let currentObstacleMinHeight;
-let helicopterX; // Helicopter's X position, scaled slightly from edge
+let helicopterX;
 
 // --- Assets ---
 const helicopterImage = new Image();
-const backgroundImage = new Image();
-let assetsLoaded = 0;
-const totalAssets = 2;
+const backgroundImage = new Image(); // Still loaded for asset counting
+const obstacleImage = new Image();
 
-// IMPORTANT: Make sure these paths are correct relative to your HTML file
+let assetsLoaded = 0;
+const totalAssets = 3; // Helicopter, Background (count), Obstacle
+
+// Asset Paths
 helicopterImage.src = 'assets/helicopter_icon.png';
-backgroundImage.src = 'assets/sky.gif'; // Or use a static image like 'assets/background.png'
+backgroundImage.src = 'assets/sky.gif'; // Path needed for loading
+obstacleImage.src = 'assets/obstacle.gif';
 
 // --- Asset Loading ---
 function assetLoadError(assetName) {
     console.error(`Failed to load ${assetName}`);
-    // Potentially show an error message to the user on the loading screen
     loadingIndicator.innerHTML = `<div>Error loading ${assetName}</div>`;
-    // Don't start the game if essential assets fail
 }
 
 helicopterImage.onload = assetLoaded;
 backgroundImage.onload = assetLoaded;
+obstacleImage.onload = assetLoaded;
+
 helicopterImage.onerror = () => assetLoadError('helicopter image');
 backgroundImage.onerror = () => assetLoadError('background image');
+obstacleImage.onerror = () => assetLoadError('obstacle image');
 
 function assetLoaded() {
     assetsLoaded++;
     console.log(`Asset loaded (${assetsLoaded}/${totalAssets})`);
     if (assetsLoaded === totalAssets) {
         console.log("All assets loaded.");
-        // Hide loading indicator ONLY when assets are ready
         loadingIndicator.classList.add('hidden');
-        initGame(); // Start game
-        // Add resize listener *after* initial setup
-        window.addEventListener('resize', debounce(handleResize, 150)); // Debounce resize
+        initGame();
+        window.addEventListener('resize', debounce(handleResize, 150));
     }
 }
 
-// --- Debounce Function (for resize) ---
+// --- Debounce Function ---
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -99,42 +99,33 @@ function debounce(func, wait) {
 
 // --- Canvas Resizing ---
 function resizeCanvas() {
-    // Get the actual size the canvas is displayed at
     const displayWidth = canvasContainer.clientWidth;
     const displayHeight = canvasContainer.clientHeight;
 
-    // Check if the size actually changed to avoid unnecessary redraws
     if (canvas.width !== displayWidth || canvas.height !== displayHeight) {
         canvas.width = displayWidth;
         canvas.height = displayHeight;
         console.log(`Canvas resized to: ${canvas.width}x${canvas.height}`);
 
-        // Recalculate dynamic sizes based on the new height
         currentHelicopterHeight = canvas.height * HELICOPTER_HEIGHT_RATIO;
-        currentHelicopterWidth = canvas.height * HELICOPTER_WIDTH_RATIO; // Keep aspect ratio
+        currentHelicopterWidth = canvas.height * HELICOPTER_WIDTH_RATIO;
         currentObstacleWidth = canvas.height * OBSTACLE_WIDTH_RATIO;
         currentObstacleGap = canvas.height * OBSTACLE_GAP_RATIO;
         currentObstacleMinHeight = canvas.height * OBSTACLE_MIN_HEIGHT_RATIO;
-        helicopterX = canvas.width * 0.15; // Position helicopter 15% from left edge
+        helicopterX = canvas.width * 0.15;
 
-        return true; // Indicate that resize happened
+        return true;
     }
-    return false; // Indicate no resize
+    return false;
 }
 
 function handleResize() {
     console.log("Resize event detected");
-    if (isGameOver) return; // Don't resize during game over screen
-
+    if (isGameOver) return;
     const resized = resizeCanvas();
-
     if (resized && !isPaused) {
-        // If running and resized, redraw immediately to avoid glitches
-        // Optional: Could adjust obstacle positions slightly if needed,
-        // but usually just redrawing with new dimensions is okay.
         redrawStaticElements();
     } else if (resized && isPaused) {
-        // If paused and resized, just redraw the paused state
         drawPauseScreen();
     }
 }
@@ -142,8 +133,7 @@ function handleResize() {
 // --- Initialization ---
 function initGame() {
     console.log("Initializing game...");
-    // Ensure canvas is sized correctly *before* first draw
-    resizeCanvas(); // Set initial dimensions and scaled sizes
+    resizeCanvas();
 
     helicopterY = canvas.height / 2 - currentHelicopterHeight / 2;
     helicopterVelocityY = 0;
@@ -161,12 +151,12 @@ function initGame() {
     gameOverScreen.classList.add('hidden');
     pauseOverlay.classList.add('hidden');
     pauseButton.textContent = 'Pause';
-    pauseButton.disabled = false; // Re-enable button
+    pauseButton.disabled = false;
     pauseButton.classList.remove('paused');
 
-    obstacles = []; // Clear obstacles
-    generateObstacle(); // Generate first obstacle
-    if(obstacles.length > 0) obstacles[0].x = canvas.width * 0.9; // Start first obstacle closer
+    obstacles = [];
+    generateObstacle();
+    if (obstacles.length > 0) obstacles[0].x = canvas.width * 0.9;
 
     if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
@@ -178,27 +168,22 @@ function initGame() {
 function gameLoop() {
     if (isGameOver) {
         showGameOver();
-        return; // Stop loop
+        return;
     }
-
     if (isPaused) {
-        // If paused, we still need the animation frame to check for unpause
         animationFrameId = requestAnimationFrame(gameLoop);
-        return; // Skip updates and drawing
+        return;
     }
 
-    // 1. Update Game State
     updateHelicopter();
     updateObstacles();
     checkCollisions();
 
-    // 2. Render Game Objects
-    // Clear canvas is handled by drawBackground covering everything
-    drawBackground();
+    // *** Rendering ***
+    drawBackground(); // Clears the canvas
     drawObstacles();
     drawHelicopter();
 
-    // 3. Increment counters & Update Score Display
     score++;
     frameCount++;
     scoreDisplay.textContent = `Score: ${score}`;
@@ -208,102 +193,66 @@ function gameLoop() {
 
 // --- Update Functions ---
 function updateHelicopter() {
-    if (isLifting) {
-        helicopterVelocityY += LIFT;
-    } else {
-        helicopterVelocityY += GRAVITY;
-    }
-
+    if (isLifting) helicopterVelocityY += LIFT;
+    else helicopterVelocityY += GRAVITY;
     helicopterVelocityY = Math.max(Math.min(helicopterVelocityY, MAX_VELOCITY), -MAX_VELOCITY);
     helicopterY += helicopterVelocityY;
-
-    // Boundary checks (use current canvas height)
-    if (helicopterY < 0 || helicopterY + currentHelicopterHeight > canvas.height) {
-        gameOver();
-    }
+    if (helicopterY < 0 || helicopterY + currentHelicopterHeight > canvas.height) gameOver();
 }
 
 function updateObstacles() {
-    // Generate new obstacles based on frame count
-    if (frameCount > 0 && frameCount % OBSTACLE_FREQUENCY === 0) {
-        generateObstacle();
-    }
-
-    // Move existing obstacles
+    if (frameCount > 0 && frameCount % OBSTACLE_FREQUENCY === 0) generateObstacle();
     for (let i = obstacles.length - 1; i >= 0; i--) {
         obstacles[i].x -= OBSTACLE_SPEED;
-
-        // Remove obstacles that have gone off-screen
-        if (obstacles[i].x + currentObstacleWidth < 0) {
-            obstacles.splice(i, 1);
-        }
+        if (obstacles[i].x + currentObstacleWidth < 0) obstacles.splice(i, 1);
     }
 }
 
 function generateObstacle() {
-    // Ensure min height doesn't make gap impossible
     const availableHeight = canvas.height - currentObstacleGap - (2 * currentObstacleMinHeight);
-    if (availableHeight < 0) {
-        console.warn("Obstacle gap and min height too large for canvas height.");
-        // Adjust gap or min height if needed, or skip generation
-        return;
-    }
-
+    if (availableHeight < 0) return;
     const topHeight = currentObstacleMinHeight + Math.random() * availableHeight;
-
-    obstacles.push({
-        x: canvas.width, // Start off-screen right
-        topHeight: topHeight,
-        bottomY: topHeight + currentObstacleGap
-    });
+    obstacles.push({ x: canvas.width, topHeight: topHeight, bottomY: topHeight + currentObstacleGap });
 }
 
 // --- Drawing Functions ---
+
+// CORRECT: Clears the canvas for CSS background
 function drawBackground() {
-    if (backgroundImage.complete && backgroundImage.naturalWidth !== 0) {
-        // Simple stretch draw - covers the whole canvas
-        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-    } else {
-        // Fallback solid color
-        ctx.fillStyle = '#87CEEB'; // Sky blue
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function drawHelicopter() {
     if (helicopterImage.complete && helicopterImage.naturalWidth !== 0) {
         ctx.drawImage(helicopterImage, helicopterX, helicopterY, currentHelicopterWidth, currentHelicopterHeight);
     } else {
-        // Fallback rectangle
-        ctx.fillStyle = '#FFA500'; // Orange
+        ctx.fillStyle = '#FFA500'; // Fallback
         ctx.fillRect(helicopterX, helicopterY, currentHelicopterWidth, currentHelicopterHeight);
     }
 }
 
 function drawObstacles() {
-    ctx.fillStyle = '#2E8B57'; // SeaGreen
-    ctx.strokeStyle = '#1E5E3A'; // Darker green border
-    ctx.lineWidth = 2;
-
+    const drawAsImage = obstacleImage.complete && obstacleImage.naturalWidth !== 0;
     obstacles.forEach(obstacle => {
-        // Draw top rectangle
-        ctx.fillRect(obstacle.x, 0, currentObstacleWidth, obstacle.topHeight);
-        ctx.strokeRect(obstacle.x, 0, currentObstacleWidth, obstacle.topHeight);
-        // Draw bottom rectangle
         const bottomHeight = canvas.height - obstacle.bottomY;
-        ctx.fillRect(obstacle.x, obstacle.bottomY, currentObstacleWidth, bottomHeight);
-        ctx.strokeRect(obstacle.x, obstacle.bottomY, currentObstacleWidth, bottomHeight);
+        if (drawAsImage) {
+            ctx.drawImage(obstacleImage, obstacle.x, 0, currentObstacleWidth, obstacle.topHeight);
+            ctx.drawImage(obstacleImage, obstacle.x, obstacle.bottomY, currentObstacleWidth, bottomHeight);
+        } else { // Fallback
+            ctx.fillStyle = '#2E8B57'; ctx.strokeStyle = '#1E5E3A'; ctx.lineWidth = 2;
+            ctx.fillRect(obstacle.x, 0, currentObstacleWidth, obstacle.topHeight);
+            ctx.strokeRect(obstacle.x, 0, currentObstacleWidth, obstacle.topHeight);
+            ctx.fillRect(obstacle.x, obstacle.bottomY, currentObstacleWidth, bottomHeight);
+            ctx.strokeRect(obstacle.x, obstacle.bottomY, currentObstacleWidth, bottomHeight);
+        }
     });
 }
 
 function drawPauseScreen() {
-    // Redraw the static elements first
     redrawStaticElements();
-    // Overlay is handled by CSS class toggle
 }
 
 function redrawStaticElements() {
-    // Used after resize or when resuming pause
     drawBackground();
     drawObstacles();
     drawHelicopter();
@@ -311,160 +260,89 @@ function redrawStaticElements() {
 
 // --- Collision Detection ---
 function checkCollisions() {
-    // Use current dimensions for collision check
     const heliRect = { x: helicopterX, y: helicopterY, width: currentHelicopterWidth, height: currentHelicopterHeight };
-
     for (const obstacle of obstacles) {
         const topRect = { x: obstacle.x, y: 0, width: currentObstacleWidth, height: obstacle.topHeight };
         const bottomRect = { x: obstacle.x, y: obstacle.bottomY, width: currentObstacleWidth, height: canvas.height - obstacle.bottomY };
-
-        // Basic AABB collision check
         if (rectsOverlap(heliRect, topRect) || rectsOverlap(heliRect, bottomRect)) {
-            gameOver();
-            return; // Exit check early
+            gameOver(); return;
         }
     }
-    // Boundary check is in updateHelicopter
 }
 
 function rectsOverlap(rect1, rect2) {
-    return (
-        rect1.x < rect2.x + rect2.width &&
-        rect1.x + rect1.width > rect2.x &&
-        rect1.y < rect2.y + rect2.height &&
-        rect1.y + rect1.height > rect2.y
-    );
+    return ( rect1.x < rect2.x + rect2.width && rect1.x + rect1.width > rect2.x && rect1.y < rect2.y + rect2.height && rect1.y + rect1.height > rect2.y );
 }
-
 
 // --- Game State Management ---
 function togglePause() {
     if (isGameOver) return;
-
     isPaused = !isPaused;
     if (isPaused) {
         pauseOverlay.classList.remove('hidden');
-        pauseButton.textContent = 'Resume';
-        pauseButton.classList.add('paused');
-        // No need to stop the loop, just skip updates/drawing inside it
+        pauseButton.textContent = 'Resume'; pauseButton.classList.add('paused');
     } else {
         pauseOverlay.classList.add('hidden');
-        pauseButton.textContent = 'Pause';
-        pauseButton.classList.remove('paused');
-        // Redraw immediately to avoid showing old frame if resize happened while paused
+        pauseButton.textContent = 'Pause'; pauseButton.classList.remove('paused');
         redrawStaticElements();
-        // Game loop will resume updates automatically
     }
 }
 
 function gameOver() {
-    if (isGameOver) return; // Prevent multiple calls
-
-    isGameOver = true;
-    isLifting = false;
-    pauseButton.disabled = true; // Disable pause when game over
-    if (animationFrameId) {
-       // Don't cancel animation frame yet, let the loop call showGameOver()
-    }
-
-    if (crashSound) {
-        crashSound.currentTime = 0;
-        crashSound.play().catch(e => console.error("Error playing sound:", e));
-    }
-
+    if (isGameOver) return;
+    isGameOver = true; isLifting = false; pauseButton.disabled = true;
+    if (crashSound) { crashSound.currentTime = 0; crashSound.play().catch(e => console.error("Error playing sound:", e)); }
     if (score > bestScore) {
-        bestScore = score;
-        localStorage.setItem('helicopterBestScore', bestScore);
+        bestScore = score; localStorage.setItem('helicopterBestScore', bestScore);
         bestScoreDisplay.textContent = `Best: ${bestScore}`;
     }
 }
 
 function showGameOver() {
-    // This is called by the game loop once isGameOver is true
-    cancelAnimationFrame(animationFrameId); // Now stop the loop
-    animationFrameId = null; // Clear the ID
+    cancelAnimationFrame(animationFrameId); animationFrameId = null;
     finalScoreDisplay.textContent = score;
     gameOverScreen.classList.remove('hidden');
 }
 
-
 function restartGame() {
     gameOverScreen.classList.add('hidden');
-    // No need to hide pause overlay, it should be hidden already
-    // Re-initialize game variables and start loop
     initGame();
 }
 
 // --- Event Listeners ---
 function handleInputStart(event) {
-    // Allow interaction only if assets are loaded
-     if (assetsLoaded < totalAssets) return;
-
-    if (event.type === 'touchstart') {
-        event.preventDefault(); // Prevent screen scrolling on touch
-    }
-
-    if (isGameOver && (event.code === 'Space' || event.code === 'Enter' || event.type === 'touchstart' || event.type === 'mousedown')) {
-       // If game over, any interaction (except pause button) restarts
-       restartGame();
-       return; // Don't process as lift/unpause
-    }
-
-    if (isPaused) {
-        togglePause(); // Unpause on tap/click/space
-    } else if (!isGameOver) {
-        isLifting = true; // Start lifting if game is running
-    }
+    if (assetsLoaded < totalAssets) return;
+    if (event.type === 'touchstart') event.preventDefault();
+    if (isGameOver && event.target !== pauseButton) { restartGame(); return; }
+    if (isPaused && event.target !== pauseButton) { togglePause(); }
+    else if (!isGameOver && !isPaused && event.target !== pauseButton) { isLifting = true; }
 }
 
 function handleInputEnd(event) {
-    if (event.type === 'touchend') {
-        event.preventDefault();
-    }
-    isLifting = false; // Stop lifting on release
+    if (event.type === 'touchend') event.preventDefault();
+    isLifting = false;
 }
 
-// Keyboard specific handlers
 function handleKeyDown(event) {
-    // Allow interaction only if assets are loaded
     if (assetsLoaded < totalAssets) return;
-
-    if (event.code === 'Space') {
-        event.preventDefault(); // Prevent scrolling
-        handleInputStart(event); // Use common start logic
-    } else if (isGameOver && event.code === 'Enter') {
-        // Allow Enter specifically for restart when game over
-        restartGame();
-    } else if (!isGameOver && event.code === 'KeyP') {
-        togglePause(); // Toggle pause with 'P' key
-    }
+    if (event.code === 'Space') { event.preventDefault(); handleInputStart(event); }
+    else if (isGameOver && event.code === 'Enter') { restartGame(); }
+    else if (!isGameOver && event.code === 'KeyP') { togglePause(); }
 }
 
 function handleKeyUp(event) {
-    // Allow interaction only if assets are loaded
     if (assetsLoaded < totalAssets) return;
-
-    if (event.code === 'Space') {
-        handleInputEnd(event); // Use common end logic
-    }
+    if (event.code === 'Space') { handleInputEnd(event); }
 }
 
-// Add listeners
-// Use canvas for pointer/touch events for better capture
 canvas.addEventListener('touchstart', handleInputStart, { passive: false });
 canvas.addEventListener('touchend', handleInputEnd);
-canvas.addEventListener('mousedown', (e) => { if (e.button === 0) handleInputStart(e); }); // Left click only
+canvas.addEventListener('mousedown', (e) => { if (e.button === 0) handleInputStart(e); });
 canvas.addEventListener('mouseup', (e) => { if (e.button === 0) handleInputEnd(e); });
-
-// Keyboard on document
 document.addEventListener('keydown', handleKeyDown);
 document.addEventListener('keyup', handleKeyUp);
-
-// Buttons
 restartButton.addEventListener('click', restartGame);
 pauseButton.addEventListener('click', togglePause);
 
 // --- Initial Load ---
-// Show loading indicator initially (CSS should handle this)
 console.log("Script loaded. Waiting for assets...");
-// Game starts automatically via assetLoaded callback.
