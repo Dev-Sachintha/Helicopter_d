@@ -3,31 +3,23 @@
 
 <head>
     <meta charset="UTF-8" />
+    <!-- Adjusted viewport for better mobile experience -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Helicopter Game</title>
+
     <!-- Normalize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Gravitas+One&family=Roboto:wght@400;700&display=swap"
         rel="stylesheet" />
+
     <!-- Custom Styles -->
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-    <!-- Add Leaderboard Toggle Button -->
-    <button id="leaderboard-toggle-button" class="leaderboard-toggle" aria-label="Toggle Leaderboard">
-        🏆
-    </button>
-
-    <!-- Leaderboard Sidebar -->
-    <div id="leaderboard-sidebar" class="leaderboard-sidebar">
-        <h2>High Scores</h2>
-        <ol id="leaderboard-list"></ol>
-        <button id="clear-scores-button" class="game-button clear-button">Clear Scores</button>
-    </div>
-
-    <!-- Original Game Structure -->
+    <!-- Simplified wrapper structure -->
     <div id="game-wrapper">
         <div id="game-container">
             <h1 class="game-title">🚁 Helicopter Game</h1>
@@ -38,28 +30,23 @@
                 <button id="pauseButton" class="game-button">Pause</button>
             </div>
 
+            <!-- Container for canvas, overlays, and loading -->
             <div id="canvas-container">
+                <!-- Loading Indicator -->
                 <div id="loadingIndicator" class="overlay">
                     <div>LOADING...</div>
                 </div>
-                <canvas id="gameCanvas"></canvas>
+
+                <canvas id="gameCanvas"></canvas> <!-- Removed fixed width/height -->
+
                 <div id="pauseOverlay" class="overlay hidden">
                     <div>PAUSED</div>
                     <div class="overlay-instructions">(Tap/Click/Space to Resume)</div>
                 </div>
 
-                <!-- Modified Game Over Screen -->
                 <div id="gameOver" class="overlay hidden">
                     <h2>Game Over!</h2>
                     <p>Your Score: <span id="finalScore">0</span></p>
-                    <!-- Area for High Score Name Input (hidden by default) -->
-                    <div id="high-score-entry" class="hidden">
-                        <p>🎉 New High Score! Enter Name: 🎉</p>
-                        <input type="text" id="player-name-input" maxlength="10" placeholder="AAA">
-                    </div>
-                    <!-- Buttons change based on whether it's a high score -->
-                    <button id="submit-score-button" class="game-button restart-button submit-button hidden">Submit &
-                        Restart</button>
                     <button id="restartButton" class="game-button restart-button">Restart</button>
                 </div>
             </div>
@@ -70,11 +57,8 @@
         </div>
     </div>
 
+    <!-- Optional: Sound element -->
     <audio id="crashSound" src="assets/crash.mp3" preload="auto"></audio>
-    <script src="script.js"></script> <!-- Make sure this points to your JS file -->
-</body>
-
-</html>
 
     <!-- Game Script -->
     <script src="script.js"></script>
