@@ -1,20 +1,38 @@
-# Simple Helicopter Game
 
-A classic side-scrolling helicopter game built with HTML5 Canvas and JavaScript.
+## How to Play
 
-## Gameplay
+-   The game starts automatically after assets are loaded.
+-   Your goal is to fly the helicopter as far as possible, avoiding obstacles and the screen boundaries.
+-   Your score increases with the distance traveled.
 
--   The game starts automatically.
--   Hold the **Left Mouse Button** or the **Spacebar** to make the helicopter ascend.
--   Release the button/key to let the helicopter descend due to gravity.
--   Navigate the helicopter through the gaps in the oncoming green obstacles.
--   Avoid hitting the top/bottom edges of the screen and the obstacles.
--   The score increases the longer you survive.
--   If you collide, the game is over. Click the "Restart" button or press Space/Enter to play again.
+## Controls
 
-## File Structure
+-   **Ascend:** Hold Left Mouse Button OR Hold Spacebar OR Tap Screen.
+-   **Descend:** Release Mouse Button/Spacebar/Tap.
+-   **Pause/Resume:** Click the "Pause"/"Resume" button OR Press 'P' key.
+-   **Restart (Game Over):** Click "Restart" button OR Press Enter/Space.
+-   **View Leaderboard:** Click "Top Scores" button.
+-   **Toggle Autopilot:** Click "Enable/Disable Autopilot" button OR Press 'O' key (when game is running and not paused).
 
-*   **HTML5:** For the basic structure and Canvas element.
-*   **CSS3:** For styling the page elements (like buttons, score display).
-*   **JavaScript (ES6+):** For game logic, rendering, controls, and collision detection
+## Future Enhancements
 
+-   More varied obstacle types and patterns.
+-   Power-ups or collectibles.
+-   More sophisticated AI/Autopilot using Machine Learning (e.g., Reinforcement Learning).
+-   Improved visual effects and animations.
+-   Player customization.
+-   Mobile touch control improvements.
+
+## Contributing
+
+Contributions are welcome! If you have suggestions or want to improve the game, feel free to fork the repository, make your changes, and submit a pull request.
+
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
+
+## License
+
+This project is open source and available under the [MIT License](LICENSE.txt) (You would create a LICENSE.txt file if you want to specify one, otherwise remove this line or state "No license specified").
